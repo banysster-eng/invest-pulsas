@@ -1,36 +1,17 @@
-# InvestPulsas — Išmani 100 €/mėn. Akcijų ir ETF Investavimo Programa (PWA + Telegram)
+# InvestPulsas — Automatinis 100 €/mėn. Akcijų ir ETF Investavimas (PWA + Trading 212 / Alpaca + Telegram)
 
-Mobiliajam telefonui ir kompiuteriui pritaikyta žiniatinklio programėlė (**PWA**), kuri automatiškai analizuoja akcijų ir Europos UCITS ETF rinkas, skaičiuoja **pirkimo ir pardavimo signalus**, sudaro optimalų **iki 100 €/mėn.** investicinį krepšelį, turi **virtualų prekybos autopilotą** bei siunčia skubias ataskaitas tiesiai į **Telegram**.
+Mobiliajam telefonui ir kompiuteriui pritaikyta žiniatinklio programėlė (**PWA**), kuri:
+1. **Nuolat analizuoja** akcijų ir Europos UCITS ETF rinkas (`SMA50`, `SMA200`, `RSI 14`, `MACD`, `Bollinger`).
+2. Leidžia **vienu paspaudimu pirkti arba parduoti** bet kurią akciją / ETF tiesiai iš kortelės (`⚡ Pirkti`).
+3. **Automatiškai vykdo pirkimus ir pardavimus (Autopilotas)** griežtai neviršydama **100 €/mėn.** limito — tiek vidiniame autopilote, tiek sujungus su tikra arba Demo brokerio sąskaita (**Trading 212 API** arba **Alpaca API**).
+4. **Automatiškai atsinaujina telefone** po kiekvieno programos ar duomenų atnaujinimo.
 
-## Pagrindinės galimybės
+## Tikro brokerio prijungimas automatiniam pirkimui (Trading 212 — 0 € komisiniai)
 
-- **Nuolatinė kiekybinė analizė (0–100 balų sistema):** vertina 50 d. ir 200 d. slankiuosius vidurkius (SMA50 / SMA200), RSI(14) nuolaidų ir perkaitimo zonas, MACD impulso posūkius, Bollinger juostas ir metinį kintamumą.
-- **Aiškūs signalai lietuvių kalba:**
-  - `STIPRUS PIRKIMAS` — stiprus ilgalaikis trendas + palanki įėjimo kaina.
-  - `PIRKTI / KAUPTI (DCA)` — tinkama periodiniam mėnesiniam investavimui.
-  - `LAIKYTI / STEBĖTI` — neutralus režimas.
-  - `FIKSUOTI PELNĄ / LŪŽĘS TRENDAS` — įspėjimas apie perkaitimą (aukštą RSI) arba lūžusią tendenciją žemiau vidurkių.
-- **Iki 100 €/mėn. krepšelio planuotojas:** parenka optimalias proporcijas eurais ir dalinėmis akcijomis pagal *Saugaus*, *Subalansuoto* arba *Augimo* strategijos profilius (orientuota į 0 € komisinių brokerius, tokius kaip *Trading 212*, *Revolut* ar *IBKR*).
-- **Dvigubas portfelio režimas:**
-  1. **Mano realus portfelis** — registruokite pirkimus, sekite mėnesinį 100 € limitą ir gaukite asmeninius pardavimo / pelno fiksavimo įspėjimus savo turimoms pozicijoms.
-  2. **Virtualus Autopilotas (Robotas)** — automatiškai vykdo simuliacinius pirkimus ir apsauginius pardavimus už 100 €/mėn. biudžetą.
-- **Automatiniai foniniai atnaujinimai (GitHub Actions):** kiekvieną darbo dieną (Europos sesijos, JAV atidarymo ir JAV uždarymo metu) nemokamai atnaujina rinkos signalus ir gali išsiųsti pranešimą į jūsų **Telegram**.
-
-## Kaip įjungti 24/7 automatinius Telegram pranešimus
-
-1. Telegram programėlėje atidarykite `@BotFather`, sukurkite botą su `/newbot` ir nukopijuokite `TELEGRAM_BOT_TOKEN` (paspauskite savo botui **Start**).
-2. Parašykite `@userinfobot` ir sužinokite savo skaitmeninį `TELEGRAM_CHAT_ID`.
-3. Šios GitHub repozitorijos nustatymuose (`Settings → Secrets and variables → Actions → New repository secret`) pridėkite:
-   - `TELEGRAM_BOT_TOKEN`
-   - `TELEGRAM_CHAT_ID`
-4. Taip pat galite išbandyti siuntimą akimirksniu pačios programėlės skiltyje **Telegram**.
-
-## Lokalus paleidimas
-
-```bash
-# Atnaujinti rinkos duomenis iš Yahoo Finance:
-python3 scripts/analyze_market.py
-
-# Paleisti vietinį serverį peržiūrai:
-python3 -m http.server 8080
-```
+1. Atidarykite **Trading 212** programėlę (*Practice / Demo* testavimui arba *Invest* tikriems pinigams) → `Settings → API (Beta) → Generate API key` (įjunkite *Account data, Portfolio, Orders*).
+2. Šioje GitHub repozitorijoje atidarykite `Settings → Secrets and variables → Actions` ir įrašykite:
+   - `T212_API_KEY` — jūsų API raktas.
+   - `T212_API_SECRET` — jūsų slaptasis raktas.
+   - `T212_ENV` — `demo` (praktinei sąskaitai) arba `live` (tikriems pinigams).
+   - `MONTHLY_BUDGET_EUR` — `100` (mėnesio saugiklis eurais).
+3. `GitHub Actions` kasdien automatiškai paleis `scripts/analyze_market.py` ir `scripts/auto_trader.py`, nupirks geriausio balo aktyvus ir atsiųs patvirtinimą į jūsų **Telegram** (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`).
