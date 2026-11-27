@@ -1,0 +1,27 @@
+{
+  "name": "InvestPulsas — 100 €/mėn. Išmanus Investavimas",
+  "short_name": "InvestPulsas",
+  "description": "Nuolatinė akcijų ir ETF rinkos analizė, pirkimo/pardavimo signalai, 100 €/mėn. krepšelio optimizavimas ir Telegram pranešimai.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0e1317",
+  "theme_color": "#0e1317",
+  "lang": "lt",
+  "categories": ["finance", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

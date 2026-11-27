@@ -1,0 +1,45 @@
+name: Rinkos analizė ir Telegram signalai
+
+on:
+  schedule:
+    # Pirmadieniais–Penktadieniais: Europos sesija (08:35 UTC), JAV atidarymas (14:45 UTC), JAV uždarymas (20:35 UTC)
+    - cron: '35 8 * * 1-5'
+    - cron: '45 14 * * 1-5'
+    - cron: '35 20 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  analyze-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Atsisiųsti repozitoriją
+        uses: actions/checkout@v4
+
+      - name: Paruošti Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Vykdyti rinkos analizę ir siųsti Telegram ataskaitą
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          APP_PUBLIC_URL: https://${{ github.repository_owner }}.github.io/invest-pulsas/
+        run: |
+          python3 scripts/analyze_market.py --notify
+
+      - name: Atnaujinti data/market_signals.json GitHub Pages puslapiui
+        run: |
+          git config user.name "InvestPulsas Bot"
+          git config user.email "actions@github.com"
+          git add data/market_signals.json
+          if git diff --staged --quiet; then
+            echo "Pokyčių nėra."
+          else
+            git commit -m "chore(signals): atnaujinti rinkos signalai $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git pull --rebase origin main
+            git push origin main
+          fi
