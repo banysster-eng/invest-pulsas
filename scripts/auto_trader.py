@@ -189,11 +189,16 @@ def main() -> int:
     assets: list[dict[str, Any]] = signals_data.get("assets", [])
     eurusd = float(signals_data.get("eurUsdRate") or 1.08)
 
+    from zoneinfo import ZoneInfo
+
     now_utc = dt.datetime.now(tz=dt.timezone.utc)
     cur_month = now_utc.strftime("%Y-%m")
-    now_lt_str = now_utc.astimezone(dt.timezone(dt.timedelta(hours=2))).strftime("%Y-%m-%d %H:%M")
+    now_lt_str = now_utc.astimezone(ZoneInfo("Europe/Vilnius")).strftime("%Y-%m-%d %H:%M")
 
-    max_monthly_eur = float(os.environ.get("MONTHLY_BUDGET_EUR", "100") or 100.0)
+    try:
+        max_monthly_eur = max(10.0, float(os.environ.get("MONTHLY_BUDGET_EUR", "100") or 100.0))
+    except ValueError:
+        max_monthly_eur = 100.0
     auto_trade_enabled = os.environ.get("AUTO_TRADE_ENABLED", "true").lower() in ("1", "true", "yes", "on")
 
     t212_key = os.environ.get("T212_API_KEY", "").strip()
@@ -245,19 +250,23 @@ def main() -> int:
             total_val = float(summary.get("totalValue", summary.get("total", free_cash)) or free_cash)
 
             state["brokerConnected"] = True
-            state["brokerName"] = f"Trading 212 ({'Realus' if client.env_mode == 'live' else 'Demo Practice'})"
+            state["brokerName"] = f"Trading 212 ({'Realus' if client.env_mode == 'live' else 'Demo'})"
             state["environment"] = client.env_mode
             state["availableCashEur"] = round(free_cash, 2)
             state["accountTotalEur"] = round(total_val, 2)
 
             if args.mode == "manual" and args.symbol:
-                asset = next((a for a in assets if a["symbol"].upper() == args.symbol.upper()), {"symbol": args.symbol})
+                asset = next((a for a in assets if a["symbol"].upper() == args.symbol.upper()), None)
+                if not asset:
+                    raise ValueError(f"Simbolis {args.symbol} nerastas analizuojamų aktyvų sąraše.")
                 t212_ticker = client.resolve_ticker(asset)
-                px_eur = float(asset.get("priceEur") or 100.0)
+                px_eur = float(asset["priceEur"])
+                if px_eur <= 0:
+                    raise ValueError(f"Neteisinga {args.symbol} kaina: {px_eur}")
                 qty = round(args.amount_eur / px_eur, 4)
                 if args.action == "SELL":
                     qty = -abs(qty)
-                if abs(qty) > 0:
+                if abs(qty) >= 0.0001:
                     client.place_market_order(t212_ticker, qty)
                     if args.action == "BUY":
                         state["spentThisMonthEur"] = round(state["spentThisMonthEur"] + args.amount_eur, 2)
@@ -266,27 +275,31 @@ def main() -> int:
                     state["orderHistory"].insert(0, {"ts": now_lt_str, "broker": state["brokerName"], "detail": msg})
 
             elif args.mode == "auto" and auto_trade_enabled:
-                # 1. Patikriname turimas pozicijas dėl pardavimo signalo
                 raw_positions = client.get_positions()
                 for p in raw_positions:
                     p_ticker = str(p.get("ticker", ""))
                     p_qty = float(p.get("quantity") or 0.0)
                     if p_qty <= 0:
                         continue
+                    p_prefix = p_ticker.split("_")[0].rstrip("da").upper()
                     matched_asset = next(
-                        (a for a in assets if DEFAULT_T212_TICKERS.get(a["symbol"]) == p_ticker),
+                        (
+                            a
+                            for a in assets
+                            if DEFAULT_T212_TICKERS.get(a["symbol"]) == p_ticker
+                            or a["symbol"].split(".")[0].upper() == p_prefix
+                        ),
                         None,
                     )
                     if matched_asset and matched_asset.get("signal") == "TRIM_SELL":
                         sell_qty = -round(p_qty * 0.5, 4)
                         if abs(sell_qty) >= 0.001:
                             client.place_market_order(p_ticker, sell_qty)
-                            msg = f"AUTO PARDAVIMAS (50%): {matched_asset['shortName']} ({sell_qty} vnt.) dėl {matched_asset['signalLabel']}"
+                            msg = f"AUTO PARDAVIMAS (50%): {matched_asset['shortName']} ({sell_qty} vnt.)"
                             executed_messages.append(msg)
                             state["orderHistory"].insert(0, {"ts": now_lt_str, "broker": state["brokerName"], "detail": msg})
                             time.sleep(1.3)
 
-                # 2. Automatinis mėnesio pirkimas iki 100 € limito
                 remaining_cap = max(0.0, max_monthly_eur - float(state.get("spentThisMonthEur", 0.0)))
                 deployable_eur = min(remaining_cap, free_cash)
                 if deployable_eur >= 10.0:
@@ -297,7 +310,10 @@ def main() -> int:
                             continue
                         asset_obj = next((a for a in assets if a["symbol"] == item["symbol"]), item)
                         t212_ticker = client.resolve_ticker(asset_obj)
-                        qty = round(leg_eur / float(asset_obj["priceEur"]), 4)
+                        px_eur = float(asset_obj.get("priceEur") or 0.0)
+                        if px_eur <= 0:
+                            continue
+                        qty = round(leg_eur / px_eur, 4)
                         if qty <= 0:
                             continue
                         client.place_market_order(t212_ticker, qty)
@@ -307,7 +323,6 @@ def main() -> int:
                         state["orderHistory"].insert(0, {"ts": now_lt_str, "broker": state["brokerName"], "detail": msg})
                         time.sleep(1.3)
 
-            # Atnaujiname pozicijų sąrašą po pavedimų
             refreshed_pos = client.get_positions()
             state["positions"] = [
                 {
@@ -328,7 +343,7 @@ def main() -> int:
             free_eur = cash_usd / eurusd
 
             state["brokerConnected"] = True
-            state["brokerName"] = f"Alpaca ({'Realus' if alp.env_mode == 'live' else 'Paper Demo'})"
+            state["brokerName"] = f"Alpaca ({'Realus' if alp.env_mode == 'live' else 'Demo'})"
             state["environment"] = alp.env_mode
             state["availableCashEur"] = round(free_eur, 2)
             state["accountTotalEur"] = round(eq_usd / eurusd, 2)
@@ -345,6 +360,18 @@ def main() -> int:
                 state["orderHistory"].insert(0, {"ts": now_lt_str, "broker": state["brokerName"], "detail": msg})
 
             elif args.mode == "auto" and auto_trade_enabled:
+                for p in alp.get_positions():
+                    sym_u = str(p.get("symbol", "")).upper()
+                    matched_asset = next(
+                        (a for a in assets if str(a.get("alpacaSymbol") or a["symbol"].split(".")[0]).upper() == sym_u),
+                        None,
+                    )
+                    if matched_asset and matched_asset.get("signal") == "TRIM_SELL":
+                        alp.close_position_pct(sym_u, 50)
+                        msg = f"AUTO PARDAVIMAS (50%): {sym_u}"
+                        executed_messages.append(msg)
+                        state["orderHistory"].insert(0, {"ts": now_lt_str, "broker": state["brokerName"], "detail": msg})
+
                 remaining_cap = max(0.0, max_monthly_eur - float(state.get("spentThisMonthEur", 0.0)))
                 deployable_eur = min(remaining_cap, free_eur)
                 if deployable_eur >= 10.0:

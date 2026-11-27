@@ -1,4 +1,4 @@
-const CACHE_NAME = 'invest-pulsas-v2';
+const CACHE_NAME = 'invest-pulsas-v3';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -29,10 +29,12 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Network-First strategija: telefonas VISADA automatiškai gauna naujausius patobulinimus ir rinkos kainas!
-// Talpykla naudojama tik tada, kai telefonas neturi interneto ryšio.
+// Aptarnaujame TIK tos pačios kilmės (same-origin) GET užklausas su Network-First strategija.
+// Išoriniai API (Alpaca, Telegram, GitHub, Yahoo) keliauja tiesiogiai be SW įsikišimo.
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+  const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
 
   event.respondWith(
     fetch(event.request, { cache: 'no-cache' })
@@ -43,6 +45,8 @@ self.addEventListener('fetch', (event) => {
         }
         return networkRes;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() =>
+        caches.match(event.request, { ignoreSearch: true }).then((r) => r || caches.match('./index.html'))
+      )
   );
 });

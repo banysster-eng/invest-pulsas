@@ -467,17 +467,16 @@ def classify_signal(
     dist_sma200 = ((price - sma200_val) / sma200_val * 100.0) if sma200_val else 0.0
     # 1) Perpirkta viršūnė -> Fiksuoti pelną
     if rsi >= 74.0 and dist_sma50 > 7.0 and not macd_rising:
-        return "TRIM_SELL", "FIKSUOTI PELNĄ / PARDUOTI DALĮ"
-    # 2) Lūžęs ilgalaikis trendas su neigiamu impulsu -> Mažinti / Saugotis
+        return "TRIM_SELL", "PARDUOTI (PELNAS)"
     if dist_sma200 < -5.5 and dist_sma50 < -6.0 and not macd_rising:
-        return "TRIM_SELL", "LŪŽĘS TRENDAS / MAŽINTI"
+        return "TRIM_SELL", "PARDUOTI / VENGTI"
     if score >= 74:
         return "STRONG_BUY", "STIPRUS PIRKIMAS"
     if score >= 60:
-        return "BUY_DCA", "PIRKTI / KAUPTI (DCA)"
+        return "BUY_DCA", "PIRKTI"
     if score <= 43:
-        return "TRIM_SELL", "ATSARGIAI / MAŽINTI"
-    return "HOLD", "LAIKYTI / STEBĖTI"
+        return "TRIM_SELL", "PARDUOTI / VENGTI"
+    return "HOLD", "LAIKYTI"
 
 
 def pct_change(closes: list[float], days: int) -> float:
@@ -578,39 +577,50 @@ def analyze_single_asset(meta_cfg: dict[str, Any], eurusd_rate: float) -> dict[s
     macd_rising = macd_hist[-1] > (macd_hist[-2] if len(macd_hist) > 1 else macd_hist[-1])
     signal_code, signal_label = classify_signal(score, rsi14, price_native, sma50, sma200, macd_rising)
 
-    # Paaiškinimai lietuvių kalba
+    # Trumpi ir aiškūs paaiškinimai paprastai kalbai (be sudėtingo žargono kortelėse)
+    if signal_code == "STRONG_BUY":
+        simple_verdict = "Tvarus augimas ir labai gera kaina pirkimui dabar."
+    elif signal_code == "BUY_DCA":
+        simple_verdict = "Tinkamas laikas ramiam mėnesiniam pirkimui."
+    elif signal_code == "TRIM_SELL":
+        if rsi14 >= 72:
+            simple_verdict = "Kaina stipriai pakilusi — verta fiksuoti dalį pelno."
+        else:
+            simple_verdict = "Silpna kryptis (kaina krenta) — geriau palaukti arba mažinti."
+    else:
+        simple_verdict = "Neutrali būsena — turimą poziciją verta ramiai laikyti."
+
+    # Išsamesni techniniai argumentai detaliajam langui
     reasons: list[str] = []
     if price_native > sma200:
         dist200 = (price_native - sma200) / sma200 * 100.0
-        reasons.append(f"Kaina išlieka ilgalaikiame augimo trende (+{dist200:.1f}% virš 200 d. vidurkio).")
+        reasons.append(f"Ilgalaikė kryptis teigiama (+{dist200:.1f}% virš 200 d. vidurkio).")
     else:
         dist200 = (price_native - sma200) / sma200 * 100.0
-        reasons.append(f"Kaina žemiau 200 d. vidurkio ({dist200:.1f}%) – padidėjęs atsargumo arba dugno paieškos režimas.")
+        reasons.append(f"Kaina žemiau 200 d. vidurkio ({dist200:.1f}%) – rekomenduojamas atsargumas.")
 
     if rsi14 <= 36:
-        reasons.append(f"RSI(14) siekia {rsi14:.1f} (perparduota zona) – istoriškai palanki nuolaida pirkimui.")
-    elif rsi14 <= 48:
-        reasons.append(f"RSI(14) yra {rsi14:.1f} – vėsi zona be perkaitimo, tinkama periodiniam pirkimui.")
+        reasons.append(f"RSI rodiklis žemas ({rsi14:.1f}) – aktyvas atpigęs, palanki nuolaida.")
+    elif rsi14 <= 50:
+        reasons.append(f"RSI rodiklis ({rsi14:.1f}) vėsioje zonoje be perkaitimo.")
     elif rsi14 >= 72:
-        reasons.append(f"RSI(14) pakilęs iki {rsi14:.1f} (perpirkta zona) – didesnė trumpalaikės korekcijos rizika.")
+        reasons.append(f"RSI rodiklis aukštas ({rsi14:.1f}) – padidėjusi korekcijos tikimybė.")
     else:
-        reasons.append(f"RSI(14) neutralioje-stiprioje zonoje ({rsi14:.1f}), rinka subalansuota.")
+        reasons.append(f"RSI rodiklis subalansuotas ({rsi14:.1f}).")
 
-    if macd_rising and macd_hist[-1] > 0:
-        reasons.append("MACD impulsas teigiamas ir stiprėjantis – pirkėjai kontroliuoja kryptį.")
-    elif macd_rising and macd_hist[-1] <= 0:
-        reasons.append("MACD neigiamas impulsas silpnėja – formuojasi galimas kainos atsispyrimo taškas.")
+    if macd_rising:
+        reasons.append("Trumpalaikis pirkėjų impulsas šiuo metu stiprėja.")
     else:
-        reasons.append("MACD impulsas šiuo metu lėtėja – verta vengti skubotų pirkimų viršūnėje.")
+        reasons.append("Trumpalaikis kainos pagreitis šiuo metu lėtėja.")
 
     if drawdown_52w <= -8.0:
-        reasons.append(f"Aktyvas prekiaujamas su {abs(drawdown_52w):.1f}% nuolaida nuo 52 savaičių viršūnės.")
+        reasons.append(f"Kaina {abs(drawdown_52w):.1f}% žemiau metų viršūnės.")
 
     # Tiksliniai lygiai (EUR)
-    entry_low_eur = (price_native - 0.8 * atr14) * to_eur
-    entry_high_eur = (price_native + 0.25 * atr14) * to_eur
+    entry_low_eur = max(0.01, (price_native - 0.8 * atr14) * to_eur)
+    entry_high_eur = max(entry_low_eur, (price_native + 0.25 * atr14) * to_eur)
     take_profit_eur = max(price_native * 1.10, price_native + 3.0 * atr14) * to_eur
-    stop_loss_eur = min(price_native * 0.92, price_native - 2.4 * atr14) * to_eur
+    stop_loss_eur = max(0.01, min(price_native * 0.92, price_native - 2.4 * atr14) * to_eur)
 
     # Istoriniai paskutinių 90 prekybos dienų duomenys grafikui (EUR valiuta!) + istoriniai signalų taškai
     chart_len = min(90, len(closes))
@@ -687,6 +697,7 @@ def analyze_single_asset(meta_cfg: dict[str, Any], eurusd_rate: float) -> dict[s
         "scoreBreakdown": breakdown,
         "signal": signal_code,
         "signalLabel": signal_label,
+        "simpleVerdict": simple_verdict,
         "entryZoneEur": [round(entry_low_eur, 2), round(entry_high_eur, 2)],
         "takeProfitEur": round(take_profit_eur, 2),
         "stopLossEur": round(stop_loss_eur, 2),
@@ -1122,10 +1133,10 @@ def main() -> int:
             "supirkinėti kokybiškus ETF pigiau."
         )
 
+    from zoneinfo import ZoneInfo
+
     now_utc = dt.datetime.now(tz=dt.timezone.utc)
-    # Lietuvos laikas (UTC+2 / UTC+3)
-    lt_offset = dt.timezone(dt.timedelta(hours=2))
-    now_lt = now_utc.astimezone(lt_offset)
+    now_lt = now_utc.astimezone(ZoneInfo("Europe/Vilnius"))
 
     output = {
         "generatedAtUtc": now_utc.strftime("%Y-%m-%dT%H:%M:%SZ"),
