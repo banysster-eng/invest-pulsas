@@ -32,6 +32,8 @@ USER_AGENT = "Mozilla/5.0"
 ASSET_UNIVERSE: list[dict[str, Any]] = [
     {
         "symbol": "VUAA.DE",
+        "isin": "IE00BFMXXD54",
+        "alpacaSymbol": "VOO",
         "name": "Vanguard S&P 500 UCITS ETF (Acc)",
         "shortName": "S&P 500 ETF",
         "category": "ETF",
@@ -44,6 +46,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "VWCE.DE",
+        "isin": "IE00BK5BQT80",
+        "alpacaSymbol": "VT",
         "name": "Vanguard FTSE All-World UCITS ETF (Acc)",
         "shortName": "All-World ETF",
         "category": "ETF",
@@ -56,6 +60,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "QDVE.DE",
+        "isin": "IE00B3WJKG14",
+        "alpacaSymbol": "XLK",
         "name": "iShares S&P 500 Info Tech Sector UCITS ETF",
         "shortName": "S&P 500 Tech ETF",
         "category": "ETF",
@@ -68,6 +74,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "SXRV.DE",
+        "isin": "IE00B53SZB19",
+        "alpacaSymbol": "QQQ",
         "name": "iShares Nasdaq 100 UCITS ETF (Acc)",
         "shortName": "Nasdaq 100 ETF",
         "category": "ETF",
@@ -80,6 +88,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "EUNL.DE",
+        "isin": "IE00B4L5Y983",
+        "alpacaSymbol": "URTH",
         "name": "iShares Core MSCI World UCITS ETF (Acc)",
         "shortName": "MSCI World ETF",
         "category": "ETF",
@@ -92,6 +102,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "IS3N.DE",
+        "isin": "IE00BKM4GZ66",
+        "alpacaSymbol": "IEMG",
         "name": "iShares Core MSCI EM IMI UCITS ETF (Acc)",
         "shortName": "Emerging Markets ETF",
         "category": "ETF",
@@ -104,6 +116,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "XDEM.DE",
+        "isin": "IE00BL25JP72",
+        "alpacaSymbol": "MTUM",
         "name": "Xtrackers MSCI World Momentum UCITS ETF",
         "shortName": "World Momentum ETF",
         "category": "ETF",
@@ -116,6 +130,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "4GLD.DE",
+        "isin": "DE000A0S9GB0",
+        "alpacaSymbol": "GLD",
         "name": "Xetra-Gold ETC (Fizinis auksas EUR)",
         "shortName": "Xetra-Gold",
         "category": "ETF",
@@ -128,6 +144,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "MSFT",
+        "isin": "US5949181045",
+        "alpacaSymbol": "MSFT",
         "name": "Microsoft Corporation",
         "shortName": "Microsoft",
         "category": "Akcija",
@@ -140,6 +158,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "NVDA",
+        "isin": "US67066G1040",
+        "alpacaSymbol": "NVDA",
         "name": "NVIDIA Corporation",
         "shortName": "NVIDIA",
         "category": "Akcija",
@@ -152,6 +172,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "GOOGL",
+        "isin": "US02079K3059",
+        "alpacaSymbol": "GOOGL",
         "name": "Alphabet Inc. (Class A)",
         "shortName": "Alphabet (Google)",
         "category": "Akcija",
@@ -164,6 +186,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "AMZN",
+        "isin": "US0231351067",
+        "alpacaSymbol": "AMZN",
         "name": "Amazon.com, Inc.",
         "shortName": "Amazon",
         "category": "Akcija",
@@ -176,6 +200,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "AAPL",
+        "isin": "US0378331005",
+        "alpacaSymbol": "AAPL",
         "name": "Apple Inc.",
         "shortName": "Apple",
         "category": "Akcija",
@@ -188,6 +214,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "META",
+        "isin": "US30303M1027",
+        "alpacaSymbol": "META",
         "name": "Meta Platforms, Inc.",
         "shortName": "Meta",
         "category": "Akcija",
@@ -200,6 +228,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "ASML.AS",
+        "isin": "NL0010273215",
+        "alpacaSymbol": "ASML",
         "name": "ASML Holding N.V.",
         "shortName": "ASML",
         "category": "Akcija",
@@ -212,6 +242,8 @@ ASSET_UNIVERSE: list[dict[str, Any]] = [
     },
     {
         "symbol": "SAP.DE",
+        "isin": "DE0007164600",
+        "alpacaSymbol": "SAP",
         "name": "SAP SE",
         "shortName": "SAP",
         "category": "Akcija",

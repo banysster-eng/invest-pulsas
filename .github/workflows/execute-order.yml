@@ -1,0 +1,65 @@
+name: Vykdyti Pirkimo arba Pardavimo Pavedimą iš Telefono
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Veiksmas (BUY arba SELL)'
+        required: true
+        default: 'BUY'
+        type: choice
+        options:
+          - BUY
+          - SELL
+      symbol:
+        description: 'Aktyvo simbolis (pvz. VUAA.DE, AAPL, MSFT)'
+        required: true
+        default: 'VUAA.DE'
+      amount_eur:
+        description: 'Suma eurais (€)'
+        required: true
+        default: '25'
+
+permissions:
+  contents: write
+
+jobs:
+  execute-broker-order:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Atsisiųsti repozitoriją
+        uses: actions/checkout@v4
+
+      - name: Paruošti Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Vykdyti pavedimą pas brokerį
+        env:
+          T212_API_KEY: ${{ secrets.T212_API_KEY }}
+          T212_API_SECRET: ${{ secrets.T212_API_SECRET }}
+          T212_ENV: ${{ secrets.T212_ENV }}
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_API_SECRET: ${{ secrets.ALPACA_API_SECRET }}
+          ALPACA_ENV: ${{ secrets.ALPACA_ENV }}
+          MONTHLY_BUDGET_EUR: ${{ secrets.MONTHLY_BUDGET_EUR }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python3 scripts/auto_trader.py \
+            --mode manual \
+            --action "${{ inputs.action }}" \
+            --symbol "${{ inputs.symbol }}" \
+            --amount-eur "${{ inputs.amount_eur }}"
+
+      - name: Išsaugoti atnaujintą brokerio būseną telefonui
+        run: |
+          git config user.name "InvestPulsas Order Bot"
+          git config user.email "actions@github.com"
+          git add data/auto_trade_state.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore(order): ${{ inputs.action }} ${{ inputs.symbol }} (${{ inputs.amount_eur }} EUR)"
+            git pull --rebase origin main
+            git push origin main
+          fi

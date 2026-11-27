@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>InvestPulsas — Išmanus 100 €/mėn. Akcijų ir ETF Investavimas</title>
-  <meta name="description" content="Nuolatinė akcijų ir UCITS ETF rinkos analizė, pirkimo ir pardavimo signalai, optimalaus 100 €/mėn. krepšelio skaičiuoklė, portfelio sekimas ir Telegram pranešimai." />
+  <title>InvestPulsas — Automatinis 100 €/mėn. Akcijų ir ETF Investavimas</title>
+  <meta name="description" content="Nuolatinė akcijų ir UCITS ETF rinkos analizė, tiesioginis ir automatinis pirkimas bei pardavimas (Trading 212 / Alpaca / Autopilotas) iki 100 €/mėn. ir Telegram signalai." />
   <meta name="theme-color" content="#0d1217" id="meta-theme-color" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -36,7 +36,7 @@
       </div>
 
       <div class="topbar-actions">
-        <button type="button" class="icon-btn" id="btn-live-refresh" title="Atnaujinti gyvas kainas ir indikatorius">
+        <button type="button" class="icon-btn" id="btn-live-refresh" title="Atnaujinti kainas ir programos versiją">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
             <path d="M3 3v5h5" />
@@ -46,7 +46,7 @@
           <span>Atnaujinti</span>
         </button>
         <button type="button" class="icon-btn" id="btn-theme-toggle" aria-label="Perjungti šviesią arba tamsią temą" title="Perjungti temą">
-          <svg id="theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="4" />
             <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
           </svg>
@@ -60,22 +60,48 @@
     <div class="install-banner hidden" id="pwa-install-banner">
       <div class="install-banner-text">
         <strong>Įsidiekite InvestPulsas į telefoną</strong>
-        <span>Veiks per visą ekraną kaip įprasta mobilioji programėlė</span>
+        <span>Visi atnaujinimai telefone įsikels automatiškai</span>
       </div>
       <button type="button" class="btn-primary" id="btn-install-pwa">Įdiegti</button>
     </div>
 
     <!-- Kompiuterio navigacija -->
     <nav class="desktop-tabs" aria-label="Pagrindinė navigacija">
-      <button type="button" class="desktop-tab-btn active" data-view="overview">Apžvalga</button>
-      <button type="button" class="desktop-tab-btn" data-view="signals">Rinkos signalai</button>
-      <button type="button" class="desktop-tab-btn" data-view="planner">100 € Mėnesio planas</button>
+      <button type="button" class="desktop-tab-btn active" data-view="overview">Apžvalga ir Pirkti</button>
+      <button type="button" class="desktop-tab-btn" data-view="signals">Visos akcijos ir ETF</button>
+      <button type="button" class="desktop-tab-btn" data-view="planner">100 € Auto-Krepšelis</button>
       <button type="button" class="desktop-tab-btn" data-view="portfolio">Portfelis ir Autopilotas</button>
-      <button type="button" class="desktop-tab-btn" data-view="settings">Telegram ir Nustatymai</button>
+      <button type="button" class="desktop-tab-btn" data-view="settings">Brokeris (T212 / Alpaca) ir Telegram</button>
     </nav>
 
     <!-- 1. APŽVALGA -->
     <section id="view-overview" class="view-section active">
+      <!-- AUTOMATINIO PIRKIMO VALDYMO SKYDELIS MATOMAS IŠKART ATIDARIUS TELEFONE -->
+      <div class="autopilot-hero">
+        <div class="autopilot-hero-top">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <strong style="font-size: 1rem;">Automatinis akcijų ir ETF pirkimas</strong>
+              <span class="badge badge-buy" id="home-broker-mode-badge">AUTOPILOTAS ĮJUNGTAS</span>
+            </div>
+            <p style="margin: 4px 0 0; font-size: 0.8rem; color: var(--text-secondary);" id="home-autopilot-desc">
+              Programa automatiškai superka stipriausio signalo aktyvus (iki 100 €/mėn.) ir parduoda perkaitusias pozicijas.
+            </p>
+          </div>
+          <label class="switch" aria-label="Įjungti arba išjungti automatinį pirkimą">
+            <input type="checkbox" id="home-toggle-autopilot" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="autopilot-pills" id="home-autopilot-pills"></div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
+          <button type="button" class="btn-primary" id="btn-home-auto-buy-now">⚡ Vykdyti automatinį pirkimą dabar</button>
+          <button type="button" class="btn-secondary" id="btn-home-connect-broker">Prijungti tikrą brokerį (Trading 212 / Alpaca)</button>
+        </div>
+      </div>
+
       <div class="hero-grid">
         <div class="surface regime-card">
           <div>
@@ -125,13 +151,13 @@
               <div class="progress-fill" id="month-progress-fill" style="width: 0%;"></div>
             </div>
             <div style="display: flex; gap: 8px; margin-top: 12px;">
-              <button type="button" class="btn-primary btn-block" id="btn-goto-planner">Kur investuoti šiandien?</button>
+              <button type="button" class="btn-primary btn-block" id="btn-goto-planner">Pirkti rekomenduojamą 100 € krepšelį</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Asmeninių pozicijų įspėjimai (rodoma jei vartotojas turi pozicijų su pardavimo/pelno signalu) -->
+      <!-- Asmeninių pozicijų įspėjimai -->
       <div class="surface" id="personal-alerts-box" style="display: none;">
         <div class="section-header">
           <div>
@@ -142,11 +168,11 @@
         <div id="personal-alerts-list"></div>
       </div>
 
-      <!-- Stipriausi šiandienos pasiūlymai -->
+      <!-- Stipriausi šiandienos pasiūlymai su tiesioginiais PIRKTI mygtukais -->
       <div class="surface">
         <div class="section-header">
           <div>
-            <h3 class="section-title">Kur labiausiai apsimoka investuoti dabar</h3>
+            <h3 class="section-title">Geriausi pirkimai dabar (spauskite „Pirkti“)</h3>
             <p class="section-subtitle">Aukščiausio įvertinimo ETF ir akcijos pagal trendo, RSI nuolaidos ir MACD impulso algoritmą</p>
           </div>
           <button type="button" class="icon-btn" id="btn-see-all-signals">Visi (16)</button>
@@ -179,8 +205,8 @@
       <div class="surface">
         <div class="section-header">
           <div>
-            <h2 class="section-title">Nuolatinis rinkos skeneris</h2>
-            <p class="section-subtitle">Paspauskite bet kurį ETF ar akciją grafikui, pirkimo/pardavimo riboms ir įtraukimui į portfelį</p>
+            <h2 class="section-title">Visos akcijos ir ETF — tiesioginis pirkimas ir pardavimas</h2>
+            <p class="section-subtitle">Spauskite „Pirkti“ greitam įsigijimui arba kortelę — pilnam 90 d. grafikui ir riboms</p>
           </div>
         </div>
 
@@ -208,12 +234,12 @@
       <div class="surface">
         <div class="section-header">
           <div>
-            <h2 class="section-title">Išmanus mėnesio investicijos paskirstymas</h2>
-            <p class="section-subtitle">Automatiškai parenka optimalias proporcijas iki 100 €/mėn. biudžetui be komisinių nuostolių</p>
+            <h2 class="section-title">Vieno paspaudimo 100 € krepšelio pirkimas</h2>
+            <p class="section-subtitle">Automatiškai paskirsto iki 100 €/mėn. į geriausius aktyvus ir vykdo pirkimus</p>
           </div>
         </div>
 
-        <label class="field-label" for="planner-budget-range">Šio mėnesio investuojama suma: <strong class="mono" id="planner-budget-val">100 €</strong></label>
+        <label class="field-label" for="planner-budget-range">Šio mėnesio pirkimo suma: <strong class="mono" id="planner-budget-val">100 €</strong></label>
         <div class="budget-slider-row">
           <span class="mono" style="font-size: 0.76rem; color: var(--text-muted);">20 €</span>
           <input type="range" id="planner-budget-range" min="20" max="300" step="5" value="100" />
@@ -236,14 +262,10 @@
           </button>
         </div>
 
-        <div id="planner-fee-tip" style="font-size: 0.79rem; color: var(--text-secondary); margin-bottom: 12px; padding: 10px 12px; background: var(--bg-subtle); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
-          💡 <strong>Svarbu iki 100 €/mėn. biudžetui:</strong> kad komisiniai nesuvalgytų grąžos, naudokite nemokamus mėnesinius planus ir dalines akcijas (pvz., <em>Trading 212</em>, <em>Revolut</em> nemokamą limitą arba <em>Swedbank Robur / ETF</em> be pirkimo mokesčio).
-        </div>
-
         <div class="alloc-list" id="planner-alloc-list"></div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px;">
-          <button type="button" class="btn-primary" id="btn-apply-plan-portfolio">Įrašyti pirkimus į portfelį</button>
+          <button type="button" class="btn-primary" id="btn-apply-plan-portfolio">⚡ Nupirkti visą krepšelį dabar</button>
           <button type="button" class="btn-secondary" id="btn-send-plan-telegram">Siųsti planą į Telegram</button>
         </div>
       </div>
@@ -252,12 +274,14 @@
     <!-- 4. PORTFELIS IR AUTOPILOTAS -->
     <section id="view-portfolio" class="view-section">
       <div class="mode-switch" role="tablist">
-        <button type="button" class="active" id="tab-real-portfolio">Mano portfelis</button>
-        <button type="button" id="tab-autopilot">Virtualus Autopilotas (Robotas)</button>
+        <button type="button" class="active" id="tab-real-portfolio">Mano portfelis ir brokeris</button>
+        <button type="button" id="tab-autopilot">Autopiloto robotas (100 €/mėn.)</button>
       </div>
 
       <!-- 4A. Realus vartotojo portfelis -->
       <div id="panel-real-portfolio">
+        <div class="surface" id="cloud-broker-sync-card" style="display: none;"></div>
+
         <div class="surface">
           <div class="kpi-strip" style="border-top: none; padding-top: 0;">
             <div class="kpi-cell">
@@ -282,42 +306,42 @@
         <div class="surface">
           <div class="section-header">
             <div>
-              <h3 class="section-title">Turimos pozicijos ir pardavimo signalai</h3>
-              <p class="section-subtitle">Programa nuolat tikrina jūsų įsigytas pozicijas ir praneša, kada verta fiksuoti pelną</p>
+              <h3 class="section-title">Nupirktos akcijos ir ETF (galite parduoti 1 paspaudimu)</h3>
+              <p class="section-subtitle">Programa nuolat tikrina jūsų pozicijas ir praneša, kada fiksuoti pelną</p>
             </div>
           </div>
           <div id="pf-holdings-list"></div>
         </div>
 
         <div class="surface">
-          <h3 class="section-title" style="margin-bottom: 12px;">Registruoti naują pirkimą</h3>
+          <h3 class="section-title" style="margin-bottom: 12px;">Greitas pirkimas</h3>
           <form id="form-add-position" class="form-grid two-col">
             <div>
               <label class="field-label" for="add-pos-symbol">Aktyvas (ETF arba akcija)</label>
               <select id="add-pos-symbol" class="form-select" required></select>
             </div>
             <div>
-              <label class="field-label" for="add-pos-eur">Investuota suma (€)</label>
-              <input type="number" id="add-pos-eur" class="form-input mono" step="0.01" min="1" max="10000" value="50" required />
+              <label class="field-label" for="add-pos-eur">Pirkimo suma (€)</label>
+              <input type="number" id="add-pos-eur" class="form-input mono" step="0.01" min="1" max="10000" value="25" required />
             </div>
             <div>
-              <label class="field-label" for="add-pos-price">Pirkimo kaina už 1 vnt. (€)</label>
+              <label class="field-label" for="add-pos-price">Kaina už 1 vnt. (€)</label>
               <input type="number" id="add-pos-price" class="form-input mono" step="0.01" min="0.01" required />
             </div>
             <div style="display: flex; align-items: flex-end;">
-              <button type="submit" class="btn-primary btn-block">+ Pridėti į portfelį</button>
+              <button type="submit" class="btn-primary btn-block">⚡ Pirkti pasirinktą aktyvą</button>
             </div>
           </form>
         </div>
       </div>
 
-      <!-- 4B. Virtualus Autopilotas (Automatinė simuliacinė prekyba po 100 €/mėn.) -->
+      <!-- 4B. Autopilotas -->
       <div id="panel-autopilot" style="display: none;">
         <div class="surface">
           <div class="toggle-row">
             <div>
               <strong style="display: block; font-size: 0.94rem;">Automatinis prekybos robotas (100 €/mėn.)</strong>
-              <span style="font-size: 0.78rem; color: var(--text-secondary);">Kai įjungta, programa pati automatiškai perka aukščiausio balo aktyvus ir parduoda perkaitusias (RSI &gt; 75) pozicijas virtualiame portfelyje.</span>
+              <span style="font-size: 0.78rem; color: var(--text-secondary);">Kai įjungta, programa pati automatiškai perka aukščiausio balo aktyvus ir parduoda perkaitusias (RSI &gt; 74) pozicijas.</span>
             </div>
             <label class="switch" aria-label="Įjungti automatinį prekybos robotą">
               <input type="checkbox" id="toggle-autopilot" checked />
@@ -327,7 +351,7 @@
 
           <div class="kpi-strip">
             <div class="kpi-cell">
-              <span class="kpi-label"> Roboto portfelis</span>
+              <span class="kpi-label">Roboto portfelis</span>
               <span class="kpi-val" id="bot-total-val">0,00 €</span>
             </div>
             <div class="kpi-cell">
@@ -344,28 +368,83 @@
             </div>
           </div>
 
-          <div style="display: flex; gap: 8px; margin-top: 14px;">
-            <button type="button" class="btn-primary" id="btn-bot-run-cycle">Vykdyti automatinį ciklą dabar</button>
-            <button type="button" class="btn-secondary" id="btn-bot-reset">Perkrauti simuliaciją</button>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px;">
+            <button type="button" class="btn-primary" id="btn-bot-run-cycle">⚡ Vykdyti automatinį pirkimą dabar</button>
+            <button type="button" class="btn-secondary" id="btn-bot-reset">Perkrauti su 100 € biudžetu</button>
           </div>
         </div>
 
         <div class="surface">
-          <h3 class="section-title" style="margin-bottom: 10px;">Automatinio roboto pozicijos ir sandorių žurnalas</h3>
+          <h3 class="section-title" style="margin-bottom: 10px;">Automatiškai nupirktos pozicijos ir žurnalas</h3>
           <div id="bot-holdings-list" style="margin-bottom: 14px;"></div>
-          <span class="eyebrow">Paskutiniai automatiniai veiksmai</span>
+          <span class="eyebrow">Paskutiniai automatiniai pirkimai ir pardavimai</span>
           <div id="bot-log-list"></div>
         </div>
       </div>
     </section>
 
-    <!-- 5. TELEGRAM IR NUSTATYMAI -->
+    <!-- 5. BROKERIS IR TELEGRAM -->
     <section id="view-settings" class="view-section">
+      <!-- TIKRO BROKERIO PRIJUNGIMAS AUTOMATINIAM PIRKIMUI -->
       <div class="surface">
         <div class="section-header">
           <div>
-            <h2 class="section-title">Skubūs pasiūlymai į telefoną per Telegram</h2>
-            <p class="section-subtitle">Gaukite automatinius pirkimo/pardavimo signalus ir 100 € krepšelio rekomendaciją tiesiai į telefoną</p>
+            <h2 class="section-title">Tikro brokerio prijungimas automatiniam pirkimui</h2>
+            <p class="section-subtitle">Prijunkite <strong>Trading 212</strong> arba <strong>Alpaca</strong>, kad programa pati vykdytų tikrus (arba nemokamus Demo) akcijų bei ETF pirkimus iki 100 €/mėn.</p>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 14px;">
+          <strong style="font-size: 0.88rem; color: var(--emerald);">1 variantas (Rekomenduojama Lietuvoje): Trading 212 API (0 € komisiniai, dalinės akcijos nuo 1 €)</strong>
+          <ol class="steps-list">
+            <li>Atidarykite <strong>Trading 212</strong> programėlę (galite pradėti nuo <em>Practice / Demo</em> režimo be jokios rizikos arba <em>Real Money Invest</em>) → paspauskite <code>Settings → API (Beta) → Generate API key</code>.</li>
+            <li>Pažymėkite leidimus <em>Account data, Portfolio, Orders</em> ir nukopijuokite <strong>API Key</strong> bei <strong>Secret Key</strong>.</li>
+            <li>Savo GitHub repozitorijoje (<code>banysster-eng/invest-pulsas → Settings → Secrets and variables → Actions</code>) įrašykite šiuos raktus:
+              <br /><code>T212_API_KEY</code>, <code>T212_API_SECRET</code> ir <code>T212_ENV</code> (įrašykite <code>demo</code> testavimui arba <code>live</code> tikriems pinigams).</li>
+            <li>Viskas! Nuo tos akimirkos GitHub serveris <strong>automatiškai 3 kartus per darbo dieną</strong> patikrins signalus ir vykdys pirkimus/pardavimus griežtai neviršydamas 100 €/mėn. limito!</li>
+          </ol>
+
+          <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border-subtle);">
+            <label class="field-label" for="gh-dispatch-token">Norite paspaudus „Pirkti“ telefone iškart išsiųsti pavedimą į Trading 212? (Neprivaloma — GitHub Fine-Grained Token su Actions teise):</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="password" id="gh-dispatch-token" class="form-input mono" placeholder="github_pat_..." autocomplete="off" />
+              <button type="button" class="btn-secondary" id="btn-save-gh-token" style="white-space: nowrap;">Išsaugoti</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 12px 14px;">
+          <strong style="font-size: 0.88rem;">2 variantas: Tiesioginis Alpaca Markets API telefone (JAV akcijos ir ETF akimirksniu iš telefono)</strong>
+          <div class="form-grid two-col" style="margin-top: 10px;">
+            <div>
+              <label class="field-label" for="alpaca-key">Alpaca API Key ID</label>
+              <input type="password" id="alpaca-key" class="form-input mono" placeholder="PK..." autocomplete="off" />
+            </div>
+            <div>
+              <label class="field-label" for="alpaca-secret">Alpaca Secret Key</label>
+              <input type="password" id="alpaca-secret" class="form-input mono" placeholder="Secret..." autocomplete="off" />
+            </div>
+            <div>
+              <label class="field-label" for="alpaca-env">Aplinka</label>
+              <select id="alpaca-env" class="form-select">
+                <option value="paper">Paper Trading (Nemokama Demo sąskaita)</option>
+                <option value="live">Live Trading (Tikri pinigai)</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+              <button type="button" class="btn-primary btn-block" id="btn-save-test-alpaca">Prijungti ir patikrinti balansą</button>
+            </div>
+          </div>
+          <p id="alpaca-status-msg" style="margin: 8px 0 0; font-size: 0.78rem; color: var(--text-secondary);"></p>
+        </div>
+      </div>
+
+      <!-- TELEGRAM -->
+      <div class="surface">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Skubūs pasiūlymai ir sandorių ataskaitos į Telegram</h2>
+            <p class="section-subtitle">Gaukite pranešimus į telefoną kiekvieną kartą, kai atsiranda signalas arba įvykdomas automatinis pirkimas</p>
           </div>
         </div>
 
@@ -380,33 +459,14 @@
           </div>
         </div>
 
-        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
-          <button type="button" class="btn-primary" id="btn-save-test-telegram">Išsaugoti ir siųsti bandomąją žinutę</button>
-        </div>
-
-        <div style="background: var(--bg-subtle); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 12px 14px;">
-          <strong style="font-size: 0.85rem;">Kaip pasijungti per 60 sekundžių (nemokamai):</strong>
-          <ol class="steps-list">
-            <li>Telegram programėlėje susiraskite oficialų <code>@BotFather</code>, parašykite <code>/newbot</code>, sugalvokite vardą ir nukopijuokite gautą <strong>Token</strong>. Nepamirškite savo naujam botui paspausti <strong>Start</strong>!</li>
-            <li>Parašykite bet kokią žinutę botui <code>@userinfobot</code> — jis iškart atsiųs jūsų skaitmeninį <strong>Id</strong> (Chat ID).</li>
-            <li>Norėdami, kad signalai ateitų <strong>automatiškai 3 kartus per darbo dieną</strong> net kai telefonas užrakintas, savo GitHub repozitorijoje atidarykite <code>Settings → Secrets and variables → Actions</code> ir pridėkite du raktus: <code>TELEGRAM_BOT_TOKEN</code> bei <code>TELEGRAM_CHAT_ID</code>.</li>
-          </ol>
-        </div>
-      </div>
-
-      <div class="surface">
-        <h3 class="section-title" style="margin-bottom: 8px;">Kaip įsidiegti programėlę į telefono ekraną</h3>
-        <ul class="steps-list">
-          <li><strong>iPhone (Safari):</strong> atidarykite puslapį per Safari → paspauskite apačioje esantį mygtuką <em>Bendrinti (Share)</em> → pasirinkite <strong>„Pridėti prie pradžios ekrano“ (Add to Home Screen)</strong>.</li>
-          <li><strong>Android (Chrome):</strong> paspauskite viršuje dešinėje <em>⋮ meniu</em> → pasirinkite <strong>„Įdiegti programėlę“ (Install app)</strong>.</li>
-        </ul>
+        <button type="button" class="btn-primary" id="btn-save-test-telegram">Išsaugoti ir siųsti bandomąją žinutę</button>
       </div>
 
       <div class="surface">
         <h3 class="section-title" style="margin-bottom: 8px;">Mėnesinio biudžeto limitas ir atsarginė kopija</h3>
         <div class="form-grid two-col" style="margin-bottom: 14px;">
           <div>
-            <label class="field-label" for="settings-monthly-cap">Numatytasis mėnesio investicijų limitas (€)</label>
+            <label class="field-label" for="settings-monthly-cap">Maksimalus mėnesio investicijų limitas (€)</label>
             <input type="number" id="settings-monthly-cap" class="form-input mono" min="10" max="2000" step="5" value="100" />
           </div>
           <div style="display: flex; align-items: flex-end;">
@@ -424,7 +484,7 @@
       </div>
 
       <p class="disclaimer-note">
-        Pastaba: „InvestPulsas“ yra techninės rinkos analizės, rodiklių skaičiavimo ir asmeninio portfelio planavimo įrankis. Pateikiami algoritminiai įverčiai nėra individuali licencijuota finansinė konsultacija – investuojant istorinė grąža negarantuoja ateities rezultatų.
+        Pastaba: „InvestPulsas“ yra techninės rinkos analizės ir automatizuoto pavedimų vykdymo įrankis. Prieš įjungdami tikrų pinigų („Live“) režimą pas brokerį, rekomenduojame išbandyti nemokamą „Demo / Paper“ sąskaitą.
       </p>
     </section>
   </main>
@@ -438,14 +498,14 @@
         <rect x="14" y="12" width="7" height="9" rx="1.5" />
         <rect x="3" y="16" width="7" height="5" rx="1.5" />
       </svg>
-      <span>Apžvalga</span>
+      <span>Pirkti / Apžv.</span>
     </button>
     <button type="button" class="nav-item" data-view="signals">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
         <polyline points="16 7 22 7 22 13" />
       </svg>
-      <span>Signalai</span>
+      <span>Akcijos/ETF</span>
     </button>
     <button type="button" class="nav-item" data-view="planner">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -461,19 +521,18 @@
         <path d="M3 5v14a2 2 0 0 0 2 2h16v-5" />
         <path d="M18 12a2 2 0 0 0 0 4h4v-4Z" />
       </svg>
-      <span>Portfelis</span>
+      <span>Autopilotas</span>
     </button>
     <button type="button" class="nav-item" data-view="settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-        <path d="m22 2-7 20-4-9-9-4Z" />
-        <path d="M22 2 11 13" />
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
       </svg>
-      <span>Telegram</span>
+      <span>Brokeris</span>
     </button>
   </nav>
 
-  <!-- Detalios aktyvo analizės langas (Bottom Sheet / Modal) -->
-  <div class="modal-backdrop" id="asset-modal" role="dialog" aria-modal="true" aria-labelledby="modal-asset-title">
+  <!-- Detalios aktyvo analizės arba Greito Pirkimo/Pardavimo langas -->
+  <div class="modal-backdrop" id="asset-modal" role="dialog" aria-modal="true">
     <div class="modal-sheet">
       <div class="sheet-handle"></div>
       <div id="asset-modal-body"></div>
@@ -482,6 +541,6 @@
 
   <div class="toast" id="app-toast" role="status" aria-live="polite"></div>
 
-  <script src="./app.js"></script>
+  <script src="./app.js?v=2"></script>
 </body>
 </html>

@@ -1,0 +1,13 @@
+{
+  "brokerConnected": false,
+  "brokerName": "Neprijungta (naudojamas vidinis programėlės autopilotas)",
+  "environment": "virtual",
+  "month": "2026-11",
+  "monthlyCapEur": 100.0,
+  "spentThisMonthEur": 0.0,
+  "availableCashEur": 0.0,
+  "accountTotalEur": 0.0,
+  "positions": [],
+  "orderHistory": [],
+  "updatedAtLt": "2026-11-27 15:08"
+}
